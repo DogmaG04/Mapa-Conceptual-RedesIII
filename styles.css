@@ -1,0 +1,109 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #080c14;
+    font-family: 'Exo 2', sans-serif
+}
+
+#map-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible
+}
+
+#title {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: .68rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .3);
+    font-family: 'JetBrains Mono', monospace;
+    pointer-events: none;
+    z-index: 10;
+    text-align: center;
+    white-space: nowrap
+}
+
+#title span {
+    color: rgba(255, 255, 255, .6)
+}
+
+#hint {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: .6rem;
+    letter-spacing: .1em;
+    color: rgba(255, 255, 255, .18);
+    font-family: 'JetBrains Mono', monospace;
+    pointer-events: none;
+    z-index: 10;
+    white-space: nowrap
+}
+
+.node-wrap {
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.node-wrap rect.bg {
+    transition: all 0.25s ease-out;
+    fill: rgba(6, 10, 18, .95);
+    stroke-width: 2px;
+    rx: 8px;
+    /* Rounded corners */
+}
+
+.node-wrap:hover rect.bg {
+    filter: brightness(1.4) drop-shadow(0 0 10px currentColor);
+    stroke-width: 3px;
+}
+
+.node-wrap text {
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.edge-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    fill: rgba(255, 255, 255, 0.5);
+    text-anchor: middle;
+    background-color: #080c14;
+    /* Simulate bg with rect behind if needed, but SVG text has no bg */
+}
+
+.edge-label-bg {
+    fill: #080c14;
+    opacity: 0.9;
+}
+
+
+/* REMOVED PANEL STYLES - Content is now in the map */
+
+/* Code Node specific styles */
+.node-wrap text.code-text {
+    font-family: 'JetBrains Mono', monospace;
+    fill: #a5d6ff;
+}
+
+/* Info Node specific styles */
+.node-wrap text.info-text {
+    fill: #ccc;
+    font-size: 0.75rem;
+}
