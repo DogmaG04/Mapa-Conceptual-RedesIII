@@ -13,14 +13,28 @@
 
 <body>
 
+  <div id="author">Nicolas Reguerin</div>
   <div id="title">CONFIGURACIÓN BÁSICA &nbsp;·&nbsp; <span>EIGRP IPv4 &amp; IPv6</span></div>
-  <div id="hint">↗ Clic en cualquier nodo para expandir el contenido</div>
+  <div id="hint">🖱️ Haz clic con el mouse en las secciones (nodos) para ver su contenido</div>
 
   <svg id="map-svg" xmlns="http://www.w3.org/2000/svg"></svg>
 
-
-  <!-- Panel removed as content is now inline -->
-
+  <!-- Tarjeta de Instrucciones -->
+  <div id="instructions-modal">
+    <div class="modal-content">
+      <h2>Mapa Conceptual EIGRP</h2>
+      <ul class="nav-hints">
+        <li><strong>🖱️ Clic normal (soltar rápido):</strong> Expande o colapsa el contenido de un nodo.</li>
+        <li><strong>🖱️ Clic Izquierdo o Derecho (mantener presionado y arrastrar):</strong> Arrastra el mapa para
+          moverte por las diferentes secciones.</li>
+        <li><strong>👆 Dispositivos Táctiles:</strong> Toca para expandir, desliza con el dedo para moverte por el mapa.
+        </li>
+        <li><strong>⚙️ Rueda del Mouse / Trackpad:</strong> Acerca o aleja (Zoom) la vista general.</li>
+      </ul>
+      <button id="close-modal"
+        onclick="document.getElementById('instructions-modal').style.display='none'">¡Entendido!</button>
+    </div>
+  </div>
 
   <script src="funcion.js"></script>
 </body>

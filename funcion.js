@@ -171,7 +171,8 @@ const NODES = [
 const SVG_NS = 'http://www.w3.org/2000/svg';
 const svg = document.getElementById('map-svg');
 
-let viewport = { x: 0, y: 0, k: 0.8 }; // Start zoomed out
+// Ajustar zoom inicial según el tamaño de la pantalla (más alejado en celulares)
+let viewport = { x: 0, y: 0, k: window.innerWidth < 768 ? 0.75 : 1.1 };
 let isDragging = false;
 let startDrag = { x: 0, y: 0 };
 
@@ -440,14 +441,87 @@ function render() {
 
 // ... (Input Handlers kept same)
 function drawEdgeLabel(parentG, x, y, text) { /* ... */ }
-function handleNodeClick(e, n) { e.stopPropagation(); if (n.children && n.children.length > 0) { n.expanded = !n.expanded; render(); } }
+function handleNodeClick(e, n) {
+    // Solo expandir si el clic fue corto (no un arrastre)
+    if (!wasDragging) {
+        e.stopPropagation();
+        if (n.children && n.children.length > 0) {
+            n.expanded = !n.expanded;
+            render();
+        }
+    }
+}
 function updateTransform() { gContent.setAttribute('transform', `translate(${viewport.x + window.innerWidth / 2},${viewport.y + 100}) scale(${viewport.k})`); }
 
 window.addEventListener('contextmenu', e => e.preventDefault());
-svg.addEventListener('mousedown', e => { if (e.button === 2) { isDragging = true; startDrag = { x: e.clientX, y: e.clientY }; svg.style.cursor = 'grabbing'; } });
-window.addEventListener('mousemove', e => { if (isDragging) { const dx = e.clientX - startDrag.x; const dy = e.clientY - startDrag.y; viewport.x += dx; viewport.y += dy; startDrag = { x: e.clientX, y: e.clientY }; updateTransform(); } });
-window.addEventListener('mouseup', () => { isDragging = false; svg.style.cursor = 'default'; });
-svg.addEventListener('wheel', e => { e.preventDefault(); const s = Math.sign(e.deltaY) * -0.1; viewport.k = Math.max(0.1, Math.min(4, viewport.k + s)); updateTransform(); });
+
+let wasDragging = false;
+
+// Eventos de Mouse (Clic izquierdo, derecho y rueda)
+svg.addEventListener('mousedown', e => {
+    // Permitir arrastrar con clic Izquierdo (0) o Derecho (2)
+    if (e.button === 0 || e.button === 2) {
+        isDragging = true;
+        wasDragging = false;
+        startDrag = { x: e.clientX, y: e.clientY };
+        svg.style.cursor = 'grabbing';
+    }
+});
+
+window.addEventListener('mousemove', e => {
+    if (isDragging) {
+        wasDragging = true; // Si se mueve mientras está presionado, es un arrastre
+        const dx = e.clientX - startDrag.x;
+        const dy = e.clientY - startDrag.y;
+        viewport.x += dx;
+        viewport.y += dy;
+        startDrag = { x: e.clientX, y: e.clientY };
+        updateTransform();
+    }
+});
+
+window.addEventListener('mouseup', () => {
+    isDragging = false;
+    svg.style.cursor = 'default';
+    // wasDragging se resetea en mousedown para permitir clics normales en nodos
+});
+
+svg.addEventListener('wheel', e => {
+    e.preventDefault();
+    // Sensibilidad ajustada para trackpads
+    const s = Math.sign(e.deltaY) * -0.05;
+    viewport.k = Math.max(0.1, Math.min(4, viewport.k + s));
+    updateTransform();
+}, { passive: false });
+
+
+// Eventos Táctiles (Celulares y Tablets)
+svg.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+        isDragging = true;
+        wasDragging = false;
+        startDrag = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+}, { passive: false });
+
+window.addEventListener('touchmove', e => {
+    if (isDragging && e.touches.length === 1) {
+        e.preventDefault(); // Evitar scroll de la página
+        wasDragging = true;
+        const dx = e.touches[0].clientX - startDrag.x;
+        const dy = e.touches[0].clientY - startDrag.y;
+        viewport.x += dx;
+        viewport.y += dy;
+        startDrag = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+        updateTransform();
+    }
+}, { passive: false });
+
+window.addEventListener('touchend', () => {
+    isDragging = false;
+});
+
+
 window.addEventListener('resize', render);
 
 render();
